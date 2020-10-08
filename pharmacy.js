@@ -31,8 +31,7 @@ export class Pharmacy {
    */
   updateBenefitValue() {
 
-    const updatedDrugs = this.drugs.map( drug => {
-        //console.log(drug)           
+    const updatedDrugs = this.drugs.map( drug => {         
         
         switch (drug.name) {
 
@@ -49,7 +48,7 @@ export class Pharmacy {
             case "Fervex":
             
               if (drug.expiresIn <= 10) { 
-                if (drug.expiresIn === 0) { // Benefit drops to 0 after the expiration date
+                if (drug.expiresIn <= 0) { // Benefit drops to 0 after the expiration date
                   drug.benefit = 0;
                 }
                 else if (drug.expiresIn <= 5) { // Benefit increases by 3 when there are 5 days or less
@@ -68,6 +67,13 @@ export class Pharmacy {
               // "Magic Pill" never expires nor decreases in Benefit
               break;
 
+            case "Dafalgan":
+
+                // Dafalgan degrades in Benefit twice as fast as normal drugs
+                drug.benefit -= 2;
+
+              break;
+
           default:
 
             if (drug.expiresIn <= 0) { // Once the expiration date has passed, Benefit degrades twice as fast
@@ -83,24 +89,21 @@ export class Pharmacy {
         // At the end of each day our system lowers both values for every drug (except: Magic Pill )
         if (["Magic Pill"].indexOf(drug.name) === -1){
           drug.expiresIn -= 1;
-        }
-        
+        }        
 
-        if (drug.benefit <= 0) { // The Benefit of an item is never negative
+        // The Benefit of an item is never negative
+        if (drug.benefit <= 0) { 
           drug.benefit = 0;
         }
 
-        if (drug.benefit >= 50) { // The Benefit of an item is never more than 50.
+        // The Benefit of an item is never more than 50.
+        if (drug.benefit >= 50) { 
           drug.benefit = 50;
         }
 
         return drug;
     });   
 
-    //console.log(this.drugs);
-    //console.log(updatedDrugs);
-
-    //return this.drugs;
     return updatedDrugs;
   }
 }
